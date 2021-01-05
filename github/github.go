@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"context"
 	"time"
+	"strings"
 
 	"golang.org/x/oauth2"
 	"github.com/google/go-github/github" 
@@ -17,28 +18,42 @@ type Repository struct{
 	Time string
 
 }
+var repos []string
+var initialRepo = make(map[string]*Repository)
+var observerRepo = make(map[string]*Repository)
 
-func InitialRepository() *Repository{
-	
+func InitialRepository(name string) *Repository{
+
 	initRepo := &Repository{}
-	r := Authentication(initRepo)
-	return r
+	i := Authentication(initRepo, name)
+	initialRepo[name] = i
+
+	return i
 }
 
-func ObserverRepository() *Repository{
+func ObserverRepository(name string) *Repository{
 	
 	obsRepo := &Repository{}
-	o :=Authentication(obsRepo)
+	o :=Authentication(obsRepo, name)
+	observerRepo[name] = o
+
 	return o
 }
 
+func RepositoryArray(repository string) []string {
+	repo := strings.Split(repository, ",")
+	for _, element := range repo {
+		repos = append(repos, element)
+	}
 
-func Authentication(r *Repository) *Repository {
+	return repos
+}
+func Authentication(r *Repository, repox string) *Repository {
 	Time := time.Now()
-	user := parseArgs()
+	user := ParseArgs()
 	token, _ := user["token"]
 	owner, _ := user["owner"]
-	repository, _ := user["repository"]
+	repository :=  repox
 
 
 	ctx := context.Background()
@@ -50,16 +65,16 @@ func Authentication(r *Repository) *Repository {
 	client := github.NewClient(tc)
 
 	// list all repositories for the authenticated user
-	repos, _, err := client.Repositories.Get(ctx, owner, repository)
+	resp, _, err := client.Repositories.Get(ctx, owner, repository)
 	if err != nil{
 		fmt.Print(err)
 	}
 	
 	repo := Repository{
-		Name : *repos.Name,
-		ForksCount :*repos.ForksCount,
-		OpenIssuesCount : *repos.OpenIssuesCount,
-		StargazersCount : *repos.StargazersCount,
+		Name : *resp.Name,
+		ForksCount :*resp.ForksCount,
+		OpenIssuesCount : *resp.OpenIssuesCount,
+		StargazersCount : *resp.StargazersCount,
 		Time : Time.Format("2006.01.02 15:04:05"),
 	}
 	return &repo

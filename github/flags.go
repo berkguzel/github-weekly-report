@@ -3,14 +3,13 @@ package github
 import (
 	"os"
 	"log"
-
 )
 var (
 	owner string
 	repository string
 )
 
-func parseArgs()map[string]string{
+func ParseArgs()map[string]string{
 
 	//TODO get interval day as arg
 
@@ -27,21 +26,17 @@ func parseArgs()map[string]string{
 	user["token"] = token
 	
 	owner := os.Getenv("OWNER")
-	if owner != ""{
-		user["owner"] = owner
+	if owner == ""{
+		log.Fatal("Owner of the repositories is not set")
 	}
-	repository := os.Getenv("REPOSITORY")
-	/*
-	fmt.Print(repository)
-	rep := strings.Split(repository, " ")
-	for _, element := range rep {
-		fmt.Printf(element)
-	}
-	*/
-	if repository != ""{
-		user["repository"] = repository
-	}
+	user["owner"] = owner
 
+	repository := os.Getenv("REPOSITORY")
+	if repository == ""{
+		log.Fatal("Repository is not set")
+	}
+	user["repository"] = repository
+	
 
 	return user
 }
