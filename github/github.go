@@ -19,31 +19,66 @@ type Repository struct{
 
 }
 var repos []string
-var initialRepo = make(map[string]*Repository)
-var observerRepo = make(map[string]*Repository)
 
-func InitialRepository(name string) *Repository{
+//TODO forked=false option
+
+func InitialRepository(name string) *Repository {
 
 	initRepo := &Repository{}
 	i := Authentication(initRepo, name)
-	initialRepo[name] = i
+	//initialRepo[name] = i
 
 	return i
 }
 
-func ObserverRepository(name string) *Repository{
+func ObserverRepository(name string) *Repository {
 	
 	obsRepo := &Repository{}
 	o :=Authentication(obsRepo, name)
-	observerRepo[name] = o
+	//observerRepo[name] = o
+
+	//fmt.Println(observerRepo[name].StargazersCount)
 
 	return o
 }
 
 func RepositoryArray(repository string) []string {
+	
+	if repository == "all" || repository == "ALL" {
+		return GetAllRepositories()
+	}
 	repo := strings.Split(repository, ",")
 	for _, element := range repo {
-		repos = append(repos, element)
+		if element != ""{
+			repos = append(repos, element)
+		}
+
+	}
+
+	return repos
+}
+
+func GetAllRepositories() []string {
+
+	user := ParseArgs()
+	owner, _ := user["owner"]
+	token, _ := user["token"]
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: token},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+	client := github.NewClient(tc)
+
+	resp, _, err := client.Repositories.List(ctx, "", nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, repo := range resp{
+		if *repo.Owner.Login == owner {
+			repos = append(repos, *repo.Name)
+		}
 	}
 
 	return repos

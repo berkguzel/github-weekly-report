@@ -13,8 +13,6 @@ func ParseArgs()map[string]string{
 
 	//TODO get interval day as arg
 
-	//TODO get multiple repositores
-
 	//TODO get all repositories of the profile 
 	 
 	user := make(map[string]string)
@@ -36,7 +34,7 @@ func ParseArgs()map[string]string{
 		log.Fatal("Repository is not set")
 	}
 	user["repository"] = repository
-	
+	// TODO be sure user seperated repositories with comma ,
 
 	return user
 }
