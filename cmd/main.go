@@ -3,11 +3,11 @@ package main
 import (
 	"time"
 	"fmt"
+
 	"github-weekly-report/github"
 )
 
 func main() {
-
 	arg := github.ParseArgs()
 	repository := arg["repository"]
 	sizeOfRepos := len(github.RepositoryArray(repository))

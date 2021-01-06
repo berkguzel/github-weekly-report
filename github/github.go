@@ -26,19 +26,15 @@ func InitialRepository(name string) *Repository {
 
 	initRepo := &Repository{}
 	i := Authentication(initRepo, name)
-	//initialRepo[name] = i
 
 	return i
 }
 
 func ObserverRepository(name string) *Repository {
-	
+
 	obsRepo := &Repository{}
 	o :=Authentication(obsRepo, name)
-	//observerRepo[name] = o
-
 	//fmt.Println(observerRepo[name].StargazersCount)
-
 	return o
 }
 
