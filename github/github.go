@@ -16,10 +16,10 @@ type Repository struct{
 	OpenIssuesCount int
 	StargazersCount int
 	Time string
+	Fork bool
 
 }
 var repos []string
-//TODO forked=false option
 
 func InitialRepository(name string) *Repository {
 
@@ -53,7 +53,7 @@ func RepositoryArray(repository string) []string {
 
 func GetAllRepositories() []string {
 
-	user := ParseArgs()
+	user, _ := ParseArgs()
 	owner, _ := user["owner"]
 	token, _ := user["token"]
 	ctx := context.Background()
@@ -77,9 +77,9 @@ func GetAllRepositories() []string {
 	return repos
 }
 func (r *Repository) Authentication(repox string) *Repository {
-	
+
 	Time := time.Now()
-	user := ParseArgs()
+	user, _ := ParseArgs()
 	token, _ := user["token"]
 	owner, _ := user["owner"]
 	repository :=  repox
@@ -103,6 +103,7 @@ func (r *Repository) Authentication(repox string) *Repository {
 	r.ForksCount = *resp.ForksCount
 	r.OpenIssuesCount = *resp.OpenIssuesCount
 	r.StargazersCount = *resp.StargazersCount
+	r.Fork = *resp.Fork
 	r.Time = Time.Format("2006.01.02 15:04:05")
 	
 	return r

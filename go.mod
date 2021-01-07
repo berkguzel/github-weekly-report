@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	cloud.google.com/go v0.74.0 // indirect
+	github.com/bwmarrin/discordgo v0.22.0
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/go-querystring v1.0.0 // indirect
 	golang.org/x/net v0.0.0-20201209123823-ac852fbbde11
