@@ -19,22 +19,19 @@ type Repository struct{
 
 }
 var repos []string
-
 //TODO forked=false option
 
 func InitialRepository(name string) *Repository {
 
 	initRepo := &Repository{}
-	i := Authentication(initRepo, name)
-
+	i := initRepo.Authentication(name)
 	return i
 }
 
 func ObserverRepository(name string) *Repository {
 
 	obsRepo := &Repository{}
-	o :=Authentication(obsRepo, name)
-	//fmt.Println(observerRepo[name].StargazersCount)
+	o := obsRepo.Authentication(name)
 	return o
 }
 
@@ -79,7 +76,8 @@ func GetAllRepositories() []string {
 
 	return repos
 }
-func Authentication(r *Repository, repox string) *Repository {
+func (r *Repository) Authentication(repox string) *Repository {
+	
 	Time := time.Now()
 	user := ParseArgs()
 	token, _ := user["token"]
@@ -100,14 +98,13 @@ func Authentication(r *Repository, repox string) *Repository {
 	if err != nil{
 		fmt.Print(err)
 	}
+
+	r.Name = *resp.Name
+	r.ForksCount = *resp.ForksCount
+	r.OpenIssuesCount = *resp.OpenIssuesCount
+	r.StargazersCount = *resp.StargazersCount
+	r.Time = Time.Format("2006.01.02 15:04:05")
 	
-	repo := Repository{
-		Name : *resp.Name,
-		ForksCount :*resp.ForksCount,
-		OpenIssuesCount : *resp.OpenIssuesCount,
-		StargazersCount : *resp.StargazersCount,
-		Time : Time.Format("2006.01.02 15:04:05"),
-	}
-	return &repo
+	return r
 	
 }

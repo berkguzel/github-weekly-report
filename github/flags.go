@@ -10,9 +10,7 @@ var (
 )
 
 func ParseArgs()map[string]string{
-
 	//TODO get interval day as arg
-
 	//TODO get all repositories of the profile 
 	 
 	user := make(map[string]string)
