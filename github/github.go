@@ -1,9 +1,8 @@
 package github
 
 import (
-	"fmt"
+	"log"
 	"context"
-	"time"
 	"strings"
 
 	"golang.org/x/oauth2"
@@ -17,14 +16,15 @@ type Repository struct{
 	StargazersCount int
 	Time string
 	Fork bool
+	WatchersCount int
 
 }
 var repos []string
-
 func InitialRepository(name string) *Repository {
 
 	initRepo := &Repository{}
 	i := initRepo.Authentication(name)
+
 	return i
 }
 
@@ -32,6 +32,7 @@ func ObserverRepository(name string) *Repository {
 
 	obsRepo := &Repository{}
 	o := obsRepo.Authentication(name)
+
 	return o
 }
 
@@ -42,10 +43,9 @@ func RepositoryArray(repository string) []string {
 	}
 	repo := strings.Split(repository, ",")
 	for _, element := range repo {
-		if element != ""{
+		if element != "" {
 			repos = append(repos, element)
 		}
-
 	}
 
 	return repos
@@ -53,7 +53,7 @@ func RepositoryArray(repository string) []string {
 
 func GetAllRepositories() []string {
 
-	user, _ := ParseArgs()
+	user, fork := ParseArgs()
 	owner, _ := user["owner"]
 	token, _ := user["token"]
 	ctx := context.Background()
@@ -65,11 +65,12 @@ func GetAllRepositories() []string {
 
 	resp, _, err := client.Repositories.List(ctx, "", nil)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	for _, repo := range resp{
-		if *repo.Owner.Login == owner {
+		if *repo.Owner.Login == owner &&
+		fork == *repo.Fork {
 			repos = append(repos, *repo.Name)
 		}
 	}
@@ -78,25 +79,21 @@ func GetAllRepositories() []string {
 }
 func (r *Repository) Authentication(repox string) *Repository {
 
-	Time := time.Now()
 	user, _ := ParseArgs()
 	token, _ := user["token"]
 	owner, _ := user["owner"]
 	repository :=  repox
-
 
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: token},
 	)
 	tc := oauth2.NewClient(ctx, ts)
-
 	client := github.NewClient(tc)
 
-	// list all repositories for the authenticated user
 	resp, _, err := client.Repositories.Get(ctx, owner, repository)
 	if err != nil{
-		fmt.Print(err)
+		log.Fatal(err)
 	}
 
 	r.Name = *resp.Name
@@ -104,7 +101,7 @@ func (r *Repository) Authentication(repox string) *Repository {
 	r.OpenIssuesCount = *resp.OpenIssuesCount
 	r.StargazersCount = *resp.StargazersCount
 	r.Fork = *resp.Fork
-	r.Time = Time.Format("2006.01.02 15:04:05")
+	r.WatchersCount = *resp.WatchersCount
 	
 	return r
 	

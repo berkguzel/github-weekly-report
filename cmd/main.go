@@ -2,10 +2,12 @@ package main
 
 import (
 	"time"
-
+	
 	"github-weekly-report/github"
 )
 
+//TODO ask multiple message or just one
+// TODO message time, day
 
 func main() {
 
@@ -15,8 +17,10 @@ func main() {
 	arrayofRepos := github.RepositoryArray(repository)
 	
 	initialRepo = RunOnce(sizeOfRepos, arrayofRepos)
-	for c := time.Tick(20 * time.Second); ; <-c { 
+	for c := time.Tick(24 * 7 * time.Hour); ; <-c { 
+
 		observerRepo = RunPeroidically(sizeOfRepos, arrayofRepos)
-		Diff(initialRepo, observerRepo)
+		Diff(initialRepo,observerRepo)
+		initialRepo = RunOnce(sizeOfRepos, arrayofRepos)
 	}
 }
