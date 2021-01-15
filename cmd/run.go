@@ -23,13 +23,19 @@ var (
 	initialRepo []*github.Repository 
 	observerRepo []*github.Repository
 )
+
+// ReturnPercentage() calculate the differences
 func ReturnPercentage(beginning int, finishing int) float64 {
+
+	// To avoid "zero value" error
 	if beginning == 0 {
 		return 0
 	}
 	return float64((finishing - beginning) * 100 / beginning) 
 }
 
+// RunOnce() call the InitialRepository() end of the time interval
+// gets arrayofRepos to get name of Repositories
 func RunOnce(sizeOfRepos int, arrayofRepos []string) []*github.Repository{
 	
 	initialRepo = nil
@@ -40,6 +46,9 @@ func RunOnce(sizeOfRepos int, arrayofRepos []string) []*github.Repository{
 
 	return initialRepo
 }
+
+// RunOnce() call the ObserverRepository() end of the time interval
+// gets arrayofRepos to get name of Repositories
 func RunPeroidically(sizeOfRepos int, arrayofRepos []string) []*github.Repository{
 
 	observerRepo = nil
@@ -51,6 +60,7 @@ func RunPeroidically(sizeOfRepos int, arrayofRepos []string) []*github.Repositor
 	return observerRepo
 }
 
+// Diff() make comparison between InitialRepoistory and ObserverRepository and sends message
 func Diff(i []*github.Repository, o []*github.Repository ){
 
 	arg, _ := github.ParseArgs()
@@ -79,6 +89,8 @@ func Diff(i []*github.Repository, o []*github.Repository ){
 	bot.Send(msg)
 	
 }
+
+// SendPercentage() sends a new message about change rate 
 func SendPercentage(i []*github.Repository, o []*github.Repository)string{
 
 	for r , v := range o {

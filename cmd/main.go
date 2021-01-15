@@ -24,5 +24,6 @@ func main() {
 		observerRepo = RunPeroidically(sizeOfRepos, arrayofRepos)
 		Diff(initialRepo,observerRepo)
 		initialRepo = RunOnce(sizeOfRepos, arrayofRepos)
+	
 	}
 }

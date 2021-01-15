@@ -20,6 +20,9 @@ type Repository struct{
 
 }
 var repos []string
+
+// InitialRepository() runs starting of the time interval to be
+// a referance to make comparison
 func InitialRepository(name string) *Repository {
 
 	initRepo := &Repository{}
@@ -27,6 +30,7 @@ func InitialRepository(name string) *Repository {
 	return initRepo.Authentication(name)
 }
 
+// ObserverRepository() runs when notification time has come
 func ObserverRepository(name string) *Repository {
 
 	obsRepo := &Repository{}
@@ -34,6 +38,7 @@ func ObserverRepository(name string) *Repository {
 	return obsRepo.Authentication(name)
 }
 
+// RepositoryArray() appends name of the repositories to repos array
 func RepositoryArray(repository string) []string {
 	
 	if repository == "all" || repository == "ALL" {
@@ -49,6 +54,9 @@ func RepositoryArray(repository string) []string {
 	return repos
 }
 
+// GetAllRepositories() runs when all option selected for repository
+// We use repository name to call Authentication() because
+// it must be call with a repository name
 func GetAllRepositories() []string {
 
 	user, fork := ParseArgs()
@@ -75,6 +83,9 @@ func GetAllRepositories() []string {
 
 	return repos
 }
+
+// Authentication() creates a connection between your Github account
+// picks up the values on your repositories
 func (r *Repository) Authentication(repox string) *Repository {
 
 	user, _ := ParseArgs()

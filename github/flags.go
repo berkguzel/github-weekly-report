@@ -17,11 +17,15 @@ var (
 	duration int
 )
 
+// Flags() gets --interval argument and return th 
 func Flags()(int, time.Duration){
 	
 	interval := flag.String("interval", "", "interval to notify")
 	flag.Parse()
 
+	// this stage control the interval argument by seperating
+	// returns time choice(day or hour) and count of the time
+	// duration is count of the time
 	if strings.ContainsAny(*interval, "h") {
 		interval := strings.Split(*interval, " ")
 		duration, err := strconv.Atoi(interval[0])
