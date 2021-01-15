@@ -11,8 +11,6 @@ import (
 
 var (
 	name string
-	message string
-	messageTotal string
 	star int
 	fork int
 	issue int
@@ -62,7 +60,8 @@ func RunPeroidically(sizeOfRepos int, arrayofRepos []string) []*github.Repositor
 
 // Diff() make comparison between InitialRepoistory and ObserverRepository and sends message
 func Diff(i []*github.Repository, o []*github.Repository ){
-
+	
+	var message string
 	arg, _ := github.ParseArgs()
 	bot, err := tgbotapi.NewBotAPI(arg["tgBotToken"])
 	if err != nil {
@@ -93,6 +92,7 @@ func Diff(i []*github.Repository, o []*github.Repository ){
 // SendPercentage() sends a new message about change rate 
 func SendPercentage(i []*github.Repository, o []*github.Repository)string{
 
+	var messageTotal string
 	for r , v := range o {
 		name = v.Name
 		fork = v.ForksCount
@@ -103,7 +103,7 @@ func SendPercentage(i []*github.Repository, o []*github.Repository)string{
 		issuePerc = ReturnPercentage(i[r].OpenIssuesCount, v.OpenIssuesCount )
 		messageTotal = messageTotal + "\n" + fmt.Sprintf("Repository: %s \n Star Count: %d  Change: %s %.2f \n Fork Count: %d Change: %s %.2f \n Issue Count: %d Change: %s %.2f \n", name, star, "%", starPerc, fork, "%", forkPerc, issue,"%", issuePerc )
 	}
-	messageTotal = fmt.Sprintf("Changes has occurred on your repositories. \n %s ", messageTotal)
+	messageTotal = fmt.Sprintf("Changes have occurred on your repositories. \n %s ", messageTotal)
 	
 	return messageTotal
 }
