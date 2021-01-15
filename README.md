@@ -20,7 +20,7 @@
 
 **TOKEN** = Telegram provides TOKEN when you created a Bot.
 
-### You can run also without Docker but firstly you should pass the variables.
+## You can run also without Docker but firstly you should pass the variables.
 ```
 export ACCESS_TOKEN="" \
 > OWNER="" \
