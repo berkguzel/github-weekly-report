@@ -23,17 +23,15 @@ var repos []string
 func InitialRepository(name string) *Repository {
 
 	initRepo := &Repository{}
-	i := initRepo.Authentication(name)
 
-	return i
+	return initRepo.Authentication(name)
 }
 
 func ObserverRepository(name string) *Repository {
 
 	obsRepo := &Repository{}
-	o := obsRepo.Authentication(name)
 
-	return o
+	return obsRepo.Authentication(name)
 }
 
 func RepositoryArray(repository string) []string {
@@ -84,6 +82,7 @@ func (r *Repository) Authentication(repox string) *Repository {
 	owner, _ := user["owner"]
 	repository :=  repox
 
+
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: token},
@@ -101,8 +100,7 @@ func (r *Repository) Authentication(repox string) *Repository {
 	r.OpenIssuesCount = *resp.OpenIssuesCount
 	r.StargazersCount = *resp.StargazersCount
 	r.Fork = *resp.Fork
-	r.WatchersCount = *resp.WatchersCount
-	
+
 	return r
 	
 }

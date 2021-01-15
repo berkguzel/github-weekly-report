@@ -8,12 +8,27 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github-weekly-report/github"
 )
-//TODO notify me after 5 minutes to test system
-//TODO notify me if there is difference
-//TODO notify me only star or star and issue etc.
-//TODO notify total star, issuei fork 
-var initialRepo []*github.Repository 
-var observerRepo []*github.Repository
+
+var (
+	name string
+	message string
+	messageTotal string
+	star int
+	fork int
+	issue int
+	forkPerc float64
+	starPerc float64
+	issuePerc float64
+
+	initialRepo []*github.Repository 
+	observerRepo []*github.Repository
+)
+func ReturnPercentage(beginning int, finishing int) float64 {
+	if beginning == 0 {
+		return 0
+	}
+	return float64((finishing - beginning) * 100 / beginning) 
+}
 
 func RunOnce(sizeOfRepos int, arrayofRepos []string) []*github.Repository{
 	
@@ -46,21 +61,37 @@ func Diff(i []*github.Repository, o []*github.Repository ){
 	bot.Debug = true
 	chatId, _ := strconv.ParseInt(arg["chatId"], 10, 64)
 
-	var message string
 	for r , v := range o {
-		name := v.Name
-		star := v.StargazersCount - i[r].StargazersCount
-		forks := v.ForksCount - i[r].ForksCount
-		issue := v.OpenIssuesCount - i[r].OpenIssuesCount
-		watchers := v.WatchersCount - i[r].WatchersCount
-		message = message + "\n" + fmt.Sprintf("Repository: %s \n New Stars: %d \n New Forks: %d \n New Issues: %d \n New Watchers: %d \n", name, star, forks, issue, watchers )
+		name = v.Name
+		star = v.StargazersCount - i[r].StargazersCount
+		fork = v.ForksCount - i[r].ForksCount
+		issue = v.OpenIssuesCount - i[r].OpenIssuesCount
+
+		message = message + "\n" + fmt.Sprintf("Repository: %s \n New Stars: %d \n New Forks: %d \n New Issues: %d \n",
+		name, star, fork, issue )
 	}
-	message = fmt.Sprintf("Hi, %s! Here is what happened in your repositories. \n %s ", arg["owner"], message)
+	message = fmt.Sprintf("Hi, %s! Here is what occurred on your repositories. \n %s ", arg["owner"], message)
 	msg := tgbotapi.NewMessage(chatId, message)
+	bot.Send(msg)
+
+	message = SendPercentage(i, o)
+	msg = tgbotapi.NewMessage(chatId, message)
 	bot.Send(msg)
 	
 }
+func SendPercentage(i []*github.Repository, o []*github.Repository)string{
 
-func Filter(){
-	//TODO filter the results
+	for r , v := range o {
+		name = v.Name
+		fork = v.ForksCount
+		forkPerc = ReturnPercentage(i[r].ForksCount, v.ForksCount)
+		star = v.StargazersCount
+		starPerc = ReturnPercentage(i[r].StargazersCount, v.StargazersCount)
+		issue = v.OpenIssuesCount
+		issuePerc = ReturnPercentage(i[r].OpenIssuesCount, v.OpenIssuesCount )
+		messageTotal = messageTotal + "\n" + fmt.Sprintf("Repository: %s \n Star Count: %d  Change: %s %.2f \n Fork Count: %d Change: %s %.2f \n Issue Count: %d Change: %s %.2f \n", name, star, "%", starPerc, fork, "%", forkPerc, issue,"%", issuePerc )
+	}
+	messageTotal = fmt.Sprintf("Changes has occurred on your repositories. \n %s ", messageTotal)
+	
+	return messageTotal
 }

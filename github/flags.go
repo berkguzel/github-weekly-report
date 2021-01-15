@@ -1,19 +1,48 @@
 package github
 
 import (
+	"flag"
 	"os"
 	"log"
+	"strings"
+	"time"
+	"strconv"
+	"fmt"
 )
 var (
 	owner string
 	repository string
 	token string
 	fork bool
-	notify string
-	difference bool
-	inerval string
+	duration int
 )
 
+func Flags()(int, time.Duration){
+	
+	interval := flag.String("interval", "", "interval to notify")
+	flag.Parse()
+
+	if strings.ContainsAny(*interval, "h") {
+		interval := strings.Split(*interval, " ")
+		duration, err := strconv.Atoi(interval[0])
+		if err != nil {
+			fmt.Println(err)
+		}
+		return duration, time.Hour
+
+	} else if strings.ContainsAny(*interval, "d"){
+		interval := strings.Split(*interval, " ")
+		duration, err := strconv.Atoi(interval[0])
+		if err != nil{
+			fmt.Println(err)
+		}
+		return duration, 24 * time.Hour
+	}else{
+		return duration, time.Hour
+	}
+}
+
+// ParseArgs() gets environment variables
 func ParseArgs() (map[string]string, bool) {	
 	
 	user := make(map[string]string)
@@ -47,7 +76,6 @@ func ParseArgs() (map[string]string, bool) {
 		log.Fatal("Repository is not specified")
 	}
 	user["repository"] = repository
-	// TODO be sure user seperated repositories with comma ,
 
 	return user, false
 }
