@@ -47,17 +47,14 @@ docker run -d \
 
 
 ```
-#### ```--interval``` argument is also available. You may change your time interval to get notification.
-```
-...
-...
-> github-weekly-report --interval="1 h" -> notify you once in a hour.
+#### ```--interval``` option is also available. You may change your time interval to get notification. 
 
-```
+You can get your notifications as daily, hourly or in minutes.
+Default value is weekly.
 ```
 ...
 ...
-> github-weekly-report --interval="1 d" -> notify you once in a day.
+> github-weekly-report --interval="1h" -> notify you once in a hour. 
 
 ```
 

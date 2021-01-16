@@ -4,7 +4,6 @@ import (
 	"flag"
 	"os"
 	"log"
-	"strings"
 	"time"
 	"strconv"
 	"fmt"
@@ -22,27 +21,40 @@ func Flags()(int, time.Duration){
 	
 	interval := flag.String("interval", "", "interval to notify")
 	flag.Parse()
+	intervalSlice := *interval
 
 	// this stage control the interval argument by seperating
 	// returns time choice(day or hour) and count of the time
 	// duration is count of the time
-	if strings.ContainsAny(*interval, "h") {
-		interval := strings.Split(*interval, " ")
-		duration, err := strconv.Atoi(interval[0])
-		if err != nil {
-			fmt.Println(err)
-		}
-		return duration, time.Hour
+	if intervalSlice == "" {
+		return 0, time.Hour
+	} else {
+		switch intervalSlice[1:] {
+		case "d":
+			duration, err := strconv.Atoi(string(intervalSlice[0]))
+			if err != nil {
+				fmt.Println(err)
+			}
+			return duration, 24* time.Hour
 
-	} else if strings.ContainsAny(*interval, "d"){
-		interval := strings.Split(*interval, " ")
-		duration, err := strconv.Atoi(interval[0])
-		if err != nil{
-			fmt.Println(err)
+		case "h":
+			duration, err := strconv.Atoi(string(intervalSlice[0]))
+			if err != nil {
+				fmt.Println(err)
+			}
+			return duration, time.Hour
+		
+		case "m":
+			duration, err := strconv.Atoi(string(intervalSlice[0]))
+			if err != nil{
+				fmt.Println(err)
+			}
+			return duration, time.Minute
+
+		default :
+			return 0, time.Hour
+					
 		}
-		return duration, 24 * time.Hour
-	}else{
-		return duration, time.Hour
 	}
 }
 

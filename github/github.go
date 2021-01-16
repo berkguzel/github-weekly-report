@@ -20,22 +20,36 @@ type Repository struct{
 
 }
 var repos []string
+var initialRepo []*Repository 
+var observerRepo []*Repository
 
 // InitialRepository() runs starting of the time interval to be
 // a referance to make comparison
-func InitialRepository(name string) *Repository {
+func InitialRepository(sizeOfRepos int, arrayofRepos []string) []*Repository {
 
 	initRepo := &Repository{}
 
-	return initRepo.Authentication(name)
+	initialRepo = nil
+	for i :=0; i < sizeOfRepos ; i ++ {
+		name := arrayofRepos[i]
+		initialRepo = append(initialRepo, initRepo.Authentication(name))
+	}
+
+	return initialRepo
 }
 
 // ObserverRepository() runs when notification time has come
-func ObserverRepository(name string) *Repository {
+func ObserverRepository(sizeOfRepos int, arrayofRepos []string) []*Repository{
 
 	obsRepo := &Repository{}
 
-	return obsRepo.Authentication(name)
+	observerRepo = nil
+	for i :=0; i < sizeOfRepos ; i ++ {
+		name := arrayofRepos[i]
+		observerRepo = append(observerRepo,obsRepo.Authentication(name))
+	}
+
+	return observerRepo
 }
 
 // RepositoryArray() appends name of the repositories to repos array

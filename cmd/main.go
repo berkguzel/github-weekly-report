@@ -9,6 +9,8 @@ import (
 var (
 	timeD time.Duration
 	interval int
+	initialRepo []*github.Repository 
+	observerRepo []*github.Repository
 )
 func main() {
 
@@ -16,14 +18,20 @@ func main() {
 	repository := arg["repository"]
 	sizeOfRepos := len(github.RepositoryArray(repository))
 	arrayofRepos := github.RepositoryArray(repository)
-	interval, timeD = github.Flags()
 	
-	initialRepo = RunOnce(sizeOfRepos, arrayofRepos)
+	interval, timeD = github.Flags()
+	if interval == 0 {
+		interval = 7 * 24 
+		timeD = time.Hour
+	}
+
+	
+	initialRepo = github.InitialRepository(sizeOfRepos, arrayofRepos)
 	for c := time.Tick(time.Duration(interval) * timeD); ; <-c { 
 
-		observerRepo = RunPeroidically(sizeOfRepos, arrayofRepos)
+		observerRepo = github.ObserverRepository(sizeOfRepos, arrayofRepos)
 		Diff(initialRepo,observerRepo)
-		initialRepo = RunOnce(sizeOfRepos, arrayofRepos)
+		initialRepo = github.InitialRepository(sizeOfRepos, arrayofRepos)
 	
 	}
 	

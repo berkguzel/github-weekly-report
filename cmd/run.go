@@ -18,8 +18,6 @@ var (
 	starPerc float64
 	issuePerc float64
 
-	initialRepo []*github.Repository 
-	observerRepo []*github.Repository
 )
 
 // ReturnPercentage() calculate the differences
@@ -30,32 +28,6 @@ func ReturnPercentage(beginning int, finishing int) float64 {
 		return 0
 	}
 	return float64((finishing - beginning) * 100 / beginning) 
-}
-
-// RunOnce() call the InitialRepository() end of the time interval
-// gets arrayofRepos to get name of Repositories
-func RunOnce(sizeOfRepos int, arrayofRepos []string) []*github.Repository{
-	
-	initialRepo = nil
-	for i :=0; i < sizeOfRepos ; i ++ {
-		name := arrayofRepos[i]
-		initialRepo = append(initialRepo, github.InitialRepository(name))
-	}
-
-	return initialRepo
-}
-
-// RunOnce() call the ObserverRepository() end of the time interval
-// gets arrayofRepos to get name of Repositories
-func RunPeroidically(sizeOfRepos int, arrayofRepos []string) []*github.Repository{
-
-	observerRepo = nil
-	for i :=0; i < sizeOfRepos ; i ++ {
-		name := arrayofRepos[i]
-		observerRepo = append(observerRepo, github.ObserverRepository(name))
-	}
-
-	return observerRepo
 }
 
 // Diff() make comparison between InitialRepoistory and ObserverRepository and sends message
