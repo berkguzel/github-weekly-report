@@ -2,7 +2,7 @@ package main
 
 import (
 	"time"
-	
+	"log"
 	"github-weekly-report/github"
 )
 
@@ -16,8 +16,11 @@ func main() {
 
 	arg, _ := github.ParseArgs()
 	repository := arg["repository"]
-	sizeOfRepos := len(github.RepositoryArray(repository))
-	arrayofRepos := github.RepositoryArray(repository)
+	arrayofRepos, err := github.RepositoryArray(repository)
+	if err != nil {
+		log.Fatal(err)
+	}
+	sizeOfRepos := len(arrayofRepos)
 	
 	interval, timeD = github.Flags()
 	if interval == 0 {
@@ -26,12 +29,24 @@ func main() {
 	}
 
 	
-	initialRepo = github.InitialRepository(sizeOfRepos, arrayofRepos)
+	initialRepo, err = github.InitialRepository(sizeOfRepos, arrayofRepos)
+	if err != nil{
+		log.Fatal(err)
+	}
+
 	for c := time.Tick(time.Duration(interval) * timeD); ; <-c { 
 
-		observerRepo = github.ObserverRepository(sizeOfRepos, arrayofRepos)
+		observerRepo, err = github.ObserverRepository(sizeOfRepos, arrayofRepos)
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		Diff(initialRepo,observerRepo)
-		initialRepo = github.InitialRepository(sizeOfRepos, arrayofRepos)
+		
+		initialRepo, err = github.InitialRepository(sizeOfRepos, arrayofRepos)
+		if err != nil {
+			log.Fatal(err)
+		}
 	
 	}
 	

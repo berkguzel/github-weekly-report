@@ -1,7 +1,6 @@
 package github
 
 import (
-	"log"
 	"context"
 	"strings"
 
@@ -25,38 +24,47 @@ var observerRepo []*Repository
 
 // InitialRepository() runs starting of the time interval to be
 // a referance to make comparison
-func InitialRepository(sizeOfRepos int, arrayofRepos []string) []*Repository {
+func InitialRepository(sizeOfRepos int, arrayofRepos []string) ([]*Repository, error) {
 
 	initRepo := &Repository{}
 
 	initialRepo = nil
 	for i :=0; i < sizeOfRepos ; i ++ {
 		name := arrayofRepos[i]
-		initialRepo = append(initialRepo, initRepo.Authentication(name))
+		v, err := initRepo.Authentication(name)
+		if err != nil {
+			return nil, err
+		}
+		initialRepo = append(initialRepo, v)
 	}
 
-	return initialRepo
+	return initialRepo, nil
 }
 
 // ObserverRepository() runs when notification time has come
-func ObserverRepository(sizeOfRepos int, arrayofRepos []string) []*Repository{
+func ObserverRepository(sizeOfRepos int, arrayofRepos []string) ([]*Repository, error){
 
 	obsRepo := &Repository{}
 
 	observerRepo = nil
 	for i :=0; i < sizeOfRepos ; i ++ {
 		name := arrayofRepos[i]
-		observerRepo = append(observerRepo,obsRepo.Authentication(name))
+		v, err := obsRepo.Authentication(name)
+		if err != nil {
+			return nil, err
+		}
+		observerRepo = append(observerRepo, v)
 	}
 
-	return observerRepo
+	return observerRepo, nil
 }
 
 // RepositoryArray() appends name of the repositories to repos array
-func RepositoryArray(repository string) []string {
+func RepositoryArray(repository string) ([]string, error) {
 	
 	if repository == "all" || repository == "ALL" {
-		return GetAllRepositories()
+		v, _ := GetAllRepositories()
+		return v, nil
 	}
 	repo := strings.Split(repository, ",")
 	for _, element := range repo {
@@ -65,13 +73,13 @@ func RepositoryArray(repository string) []string {
 		}
 	}
 
-	return repos
+	return repos, nil
 }
 
 // GetAllRepositories() runs when all option selected for repository
 // We use repository name to call Authentication() because
 // it must be call with a repository name
-func GetAllRepositories() []string {
+func GetAllRepositories() ([]string, error) {
 
 	user, fork := ParseArgs()
 	owner, _ := user["owner"]
@@ -85,7 +93,7 @@ func GetAllRepositories() []string {
 
 	resp, _, err := client.Repositories.List(ctx, "", nil)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	for _, repo := range resp{
@@ -95,12 +103,12 @@ func GetAllRepositories() []string {
 		}
 	}
 
-	return repos
+	return repos, nil
 }
 
 // Authentication() creates a connection between your Github account
 // picks up the values on your repositories
-func (r *Repository) Authentication(repox string) *Repository {
+func (r *Repository) Authentication(repox string) (*Repository, error) {
 
 	user, _ := ParseArgs()
 	token, _ := user["token"]
@@ -117,7 +125,7 @@ func (r *Repository) Authentication(repox string) *Repository {
 
 	resp, _, err := client.Repositories.Get(ctx, owner, repository)
 	if err != nil{
-		log.Fatal(err)
+		return nil, err
 	}
 
 	r.Name = *resp.Name
@@ -126,6 +134,6 @@ func (r *Repository) Authentication(repox string) *Repository {
 	r.StargazersCount = *resp.StargazersCount
 	r.Fork = *resp.Fork
 
-	return r
+	return r, nil
 	
 }

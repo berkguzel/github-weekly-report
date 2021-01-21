@@ -25,7 +25,7 @@ func ReturnPercentage(beginning int, finishing int) float64 {
 
 	// To avoid "zero value" error
 	if beginning == 0 {
-		return 0
+		return float64((finishing - beginning) * 100 / 1)
 	}
 	return float64((finishing - beginning) * 100 / beginning) 
 }
