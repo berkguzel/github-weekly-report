@@ -29,3 +29,10 @@ jobs:
       with:
         version: latest
         args: release --snapshot --skip-publish --skip-validating --rm-dist
+      env:
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }} 
+        OWNER: ${{ secrets.OWNER }} 
+        REPOSITORY: ${{ secrets.REPOSITORY }}
+        CHATID: ${{ secrets.CHATID }}
+        TOKEN: ${{ secrets.TOKEN}}
+
