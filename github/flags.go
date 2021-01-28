@@ -12,22 +12,27 @@ var (
 	owner string
 	repository string
 	token string
-	fork bool
 	duration int
+	interval *string
+	fork *bool
+	intervalSlice string
+	forkFlag bool
 )
 
 // Flags() gets --interval argument and return th 
-func Flags()(int, time.Duration){
+func Flags()(int, time.Duration, bool){
 	
-	interval := flag.String("interval", "", "interval to notify")
+	interval = flag.String("interval", "", "interval to notify")
+	fork = flag.Bool("fork", false, "true returns the forked repositories")
 	flag.Parse()
-	intervalSlice := *interval
+	intervalSlice = *interval
+	forkFlag = *fork
 
 	// this stage control the interval argument by seperating
 	// returns time choice(day or hour) and count of the time
 	// duration is count of the time
 	if intervalSlice == "" {
-		return 0, time.Hour
+		return 0, time.Hour, forkFlag
 	} else {
 		switch intervalSlice[1:] {
 		case "d":
@@ -35,31 +40,31 @@ func Flags()(int, time.Duration){
 			if err != nil {
 				fmt.Println(err)
 			}
-			return duration, 24* time.Hour
+			return duration, 24* time.Hour, forkFlag
 
 		case "h":
 			duration, err := strconv.Atoi(string(intervalSlice[0]))
 			if err != nil {
 				fmt.Println(err)
 			}
-			return duration, time.Hour
+			return duration, time.Hour, forkFlag
 		
 		case "m":
 			duration, err := strconv.Atoi(string(intervalSlice[0]))
 			if err != nil{
 				fmt.Println(err)
 			}
-			return duration, time.Minute
+			return duration, time.Minute, forkFlag
 
 		default :
-			return 0, time.Hour
+			return 0, time.Hour, forkFlag
 					
 		}
 	}
 }
 
 // ParseArgs() gets environment variables
-func ParseArgs() (map[string]string, bool) {	
+func ParseArgs() map[string]string {	
 	
 	user := make(map[string]string)
 
@@ -93,5 +98,5 @@ func ParseArgs() (map[string]string, bool) {
 	}
 	user["repository"] = repository
 
-	return user, false
+	return user
 }

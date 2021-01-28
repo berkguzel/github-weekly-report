@@ -3,32 +3,32 @@ package main
 import (
 	"time"
 	"log"
+
 	"github-weekly-report/github"
 )
 
 var (
 	timeD time.Duration
 	interval int
-	initialRepo []*github.Repository 
-	observerRepo []*github.Repository
+	initialRepo []github.Repository 
+	observerRepo []github.Repository
 )
 func main() {
 
-	arg, _ := github.ParseArgs()
+	arg := github.ParseArgs()
 	repository := arg["repository"]
 	arrayofRepos, err := github.RepositoryArray(repository)
 	if err != nil {
 		log.Fatal(err)
 	}
 	sizeOfRepos := len(arrayofRepos)
-	
-	interval, timeD = github.Flags()
+
+	interval, timeD, _ = github.Flags()
 	if interval == 0 {
 		interval = 7 * 24 
 		timeD = time.Hour
 	}
 
-	
 	initialRepo, err = github.InitialRepository(sizeOfRepos, arrayofRepos)
 	if err != nil{
 		log.Fatal(err)
@@ -42,6 +42,7 @@ func main() {
 		}
 
 		Diff(initialRepo,observerRepo)
+
 		
 		initialRepo, err = github.InitialRepository(sizeOfRepos, arrayofRepos)
 		if err != nil {

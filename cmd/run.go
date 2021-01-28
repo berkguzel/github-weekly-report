@@ -31,10 +31,10 @@ func ReturnPercentage(beginning int, finishing int) float64 {
 }
 
 // Diff() make comparison between InitialRepoistory and ObserverRepository and sends message
-func Diff(i []*github.Repository, o []*github.Repository ){
+func Diff(i []github.Repository, o []github.Repository ){
 	
 	var message string
-	arg, _ := github.ParseArgs()
+	arg := github.ParseArgs()
 	bot, err := tgbotapi.NewBotAPI(arg["tgBotToken"])
 	if err != nil {
 		log.Panic(err)
@@ -57,12 +57,11 @@ func Diff(i []*github.Repository, o []*github.Repository ){
 
 	message = SendPercentage(i, o)
 	msg = tgbotapi.NewMessage(chatId, message)
-	bot.Send(msg)
-	
+	bot.Send(msg)	
 }
 
 // SendPercentage() sends a new message about change rate 
-func SendPercentage(i []*github.Repository, o []*github.Repository)string{
+func SendPercentage(i []github.Repository, o []github.Repository)string{
 
 	var messageTotal string
 	for r , v := range o {

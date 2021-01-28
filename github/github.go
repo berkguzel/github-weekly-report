@@ -19,30 +19,34 @@ type Repository struct{
 
 }
 var repos []string
-var initialRepo []*Repository 
-var observerRepo []*Repository
+//var initialRepo []Repository
+var observerRepo []Repository
 
 // InitialRepository() runs starting of the time interval to be
 // a referance to make comparison
-func InitialRepository(sizeOfRepos int, arrayofRepos []string) ([]*Repository, error) {
+func InitialRepository(sizeOfRepos int, arrayofRepos []string) ([]Repository, error) {
 
 	initRepo := &Repository{}
-
+	initialRepo := make([]Repository, sizeOfRepos)
 	initialRepo = nil
 	for i :=0; i < sizeOfRepos ; i ++ {
 		name := arrayofRepos[i]
-		v, err := initRepo.Authentication(name)
-		if err != nil {
-			return nil, err
-		}
-		initialRepo = append(initialRepo, v)
-	}
+		v, _ := initRepo.Authentication(name)
 
+		initialRepo = append(initialRepo, Repository{
+			Name: v.Name,
+			ForksCount: v.ForksCount,
+			OpenIssuesCount: v.OpenIssuesCount,
+			StargazersCount: v.StargazersCount,
+			Time: v.Time,
+			Fork: v.Fork,
+		})
+	}
 	return initialRepo, nil
 }
 
 // ObserverRepository() runs when notification time has come
-func ObserverRepository(sizeOfRepos int, arrayofRepos []string) ([]*Repository, error){
+func ObserverRepository(sizeOfRepos int, arrayofRepos []string) ([]Repository, error){
 
 	obsRepo := &Repository{}
 
@@ -53,7 +57,14 @@ func ObserverRepository(sizeOfRepos int, arrayofRepos []string) ([]*Repository, 
 		if err != nil {
 			return nil, err
 		}
-		observerRepo = append(observerRepo, v)
+		observerRepo = append(observerRepo, Repository{
+			Name: v.Name,
+			ForksCount: v.ForksCount,
+			OpenIssuesCount: v.OpenIssuesCount,
+			StargazersCount: v.StargazersCount,
+			Time: v.Time,
+			Fork: v.Fork,
+		})
 	}
 
 	return observerRepo, nil
@@ -81,7 +92,8 @@ func RepositoryArray(repository string) ([]string, error) {
 // it must be call with a repository name
 func GetAllRepositories() ([]string, error) {
 
-	user, fork := ParseArgs()
+	user := ParseArgs()
+	_,_, fork := Flags()
 	owner, _ := user["owner"]
 	token, _ := user["token"]
 	ctx := context.Background()
@@ -110,7 +122,7 @@ func GetAllRepositories() ([]string, error) {
 // picks up the values on your repositories
 func (r *Repository) Authentication(repox string) (*Repository, error) {
 
-	user, _ := ParseArgs()
+	user := ParseArgs()
 	token, _ := user["token"]
 	owner, _ := user["owner"]
 	repository :=  repox
