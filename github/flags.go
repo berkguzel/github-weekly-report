@@ -1,7 +1,6 @@
 package github
 
 import (
-	"flag"
 	"os"
 	"log"
 	"time"
@@ -13,51 +12,52 @@ var (
 	repository string
 	token string
 	duration int
-	interval *string
-	fork *bool
-	intervalSlice string
+	fork bool
+	interval string
 	forkFlag bool
 )
 
 // Flags() gets --interval argument and return th 
 func Flags()(int, time.Duration, bool){
 	
-	interval = flag.String("interval", "", "interval to notify")
-	fork = flag.Bool("fork", false, "true returns the forked repositories")
-	flag.Parse()
-	intervalSlice = *interval
-	forkFlag = *fork
+	interval = os.Getenv("INTERVAL")
+	forkEnv := os.Getenv("FORK")
+	if forkEnv == ""{
+		fork = false
+	}else {
+		fork = true
+
+	}
 
 	// this stage control the interval argument by seperating
 	// returns time choice(day or hour) and count of the time
 	// duration is count of the time
-	if intervalSlice == "" {
-		return 0, time.Hour, forkFlag
+	if interval== "" {
+		return 0, time.Hour, fork
 	} else {
-		switch intervalSlice[1:] {
+		switch interval[1:] {
 		case "d":
-			duration, err := strconv.Atoi(string(intervalSlice[0]))
+			duration, err := strconv.Atoi(string(interval[0]))
 			if err != nil {
 				fmt.Println(err)
 			}
-			return duration, 24* time.Hour, forkFlag
+			return duration, 24* time.Hour, fork
 
 		case "h":
-			duration, err := strconv.Atoi(string(intervalSlice[0]))
+			duration, err := strconv.Atoi(string(interval[0]))
 			if err != nil {
 				fmt.Println(err)
 			}
-			return duration, time.Hour, forkFlag
+			return duration, time.Hour, fork
 		
 		case "m":
-			duration, err := strconv.Atoi(string(intervalSlice[0]))
+			duration, err := strconv.Atoi(string(interval[0]))
 			if err != nil{
 				fmt.Println(err)
 			}
-			return duration, time.Minute, forkFlag
-
+			return duration, time.Minute, fork
 		default :
-			return 0, time.Hour, forkFlag
+			return 0, time.Hour, fork
 					
 		}
 	}

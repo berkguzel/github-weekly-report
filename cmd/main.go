@@ -9,7 +9,7 @@ import (
 
 var (
 	timeD time.Duration
-	interval int
+	notifyInterval int
 	initialRepo []github.Repository 
 	observerRepo []github.Repository
 )
@@ -23,9 +23,10 @@ func main() {
 	}
 	sizeOfRepos := len(arrayofRepos)
 
-	interval, timeD, _ = github.Flags()
-	if interval == 0 {
-		interval = 7 * 24 
+	
+	notifyInterval, timeD, _ := github.Flags()
+	if notifyInterval == 0 {
+		notifyInterval = 7 * 24 
 		timeD = time.Hour
 	}
 
@@ -34,7 +35,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	for c := time.Tick(time.Duration(interval) * timeD); ; <-c { 
+
+	for c := time.Tick(time.Duration(notifyInterval) * timeD); ; <-c { 
 
 		observerRepo, err = github.ObserverRepository(sizeOfRepos, arrayofRepos)
 		if err != nil {

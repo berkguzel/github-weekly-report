@@ -16,23 +16,23 @@ jobs:
       with:
         go-version: 1.15
     
-    - name: go mod tidy run
-      run: go mod tidy && git diff --no-patch --exit-code
+    - name: go mod tidy
+      run: go mod tidy
     
     - name: Build
       run: go build -v ./...
 
     - name: Test
-      run: go test -v ./...
-    - name: Build with Goreleaser
-      uses: goreleaser/goreleaser-action@v1
-      with:
-        version: latest
-        args: release --snapshot --skip-publish --skip-validating --rm-dist
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }} 
         OWNER: ${{ secrets.OWNER }} 
         REPOSITORY: ${{ secrets.REPOSITORY }}
         CHATID: ${{ secrets.CHATID }}
         TOKEN: ${{ secrets.TOKEN}}
+      run: go test -v ./...
+    - name: Build with Goreleaser
+      uses: goreleaser/goreleaser-action@v1
+      with:
+        version: latest
+        args: release --snapshot --skip-publish --skip-validate --rm-dist
 

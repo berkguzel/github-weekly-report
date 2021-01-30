@@ -47,14 +47,14 @@ docker run -d \
 
 
 ```
-#### ```--interval``` option is also available. You may change your time interval to get notification. 
+#### ``` INTERVAL```  and ```FORK``` choices are also available. You may change your time interval to get notification and see the occurred stuffs on your repositories you forked. 
 
 You can get your notifications as daily, hourly or in minutes.
 Default value is weekly.
 ```
-...
-...
-> github-weekly-report --interval="1h" -> notify you once in a hour. 
+
+> INTERVAL = 1h    -> notify you once in a hour.
+> FORK     = true  -> notify you about forked repositories 
 
 ```
 
