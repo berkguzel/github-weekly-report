@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"github-weekly-report/github"
+	"github.com/berkguzel/github-weekly-report/github"
 )
 
 var (

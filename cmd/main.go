@@ -4,7 +4,7 @@ import (
 	"time"
 	"log"
 
-	"github-weekly-report/github"
+	"github.com/berkguzel/github-weekly-report/github"
 )
 
 var (

@@ -15,7 +15,6 @@ type Repository struct{
 	StargazersCount int
 	Time string
 	Fork bool
-	WatchersCount int
 
 }
 var repos []string
