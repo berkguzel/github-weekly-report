@@ -18,7 +18,7 @@ type Repository struct{
 
 }
 var repos []string
-//var initialRepo []Repository
+var initialRepo []Repository
 var observerRepo []Repository
 
 // InitialRepository() runs starting of the time interval to be
@@ -26,11 +26,11 @@ var observerRepo []Repository
 func InitialRepository(sizeOfRepos int, arrayofRepos []string) ([]Repository, error) {
 
 	initRepo := &Repository{}
-	initialRepo := make([]Repository, sizeOfRepos)
+
 	initialRepo = nil
 	for i :=0; i < sizeOfRepos ; i ++ {
 		name := arrayofRepos[i]
-		v, _ := initRepo.Authentication(name)
+		v, _ := initRepo.GetValues(name)
 
 		initialRepo = append(initialRepo, Repository{
 			Name: v.Name,
@@ -52,7 +52,7 @@ func ObserverRepository(sizeOfRepos int, arrayofRepos []string) ([]Repository, e
 	observerRepo = nil
 	for i :=0; i < sizeOfRepos ; i ++ {
 		name := arrayofRepos[i]
-		v, err := obsRepo.Authentication(name)
+		v, err := obsRepo.GetValues(name)
 		if err != nil {
 			return nil, err
 		}
@@ -87,20 +87,10 @@ func RepositoryArray(repository string) ([]string, error) {
 }
 
 // GetAllRepositories() runs when all option selected for repository
-// We use repository name to call Authentication() because
-// it must be call with a repository name
 func GetAllRepositories() ([]string, error) {
 
-	user := ParseArgs()
 	_,_, fork := Flags()
-	owner, _ := user["owner"]
-	token, _ := user["token"]
-	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: token},
-	)
-	tc := oauth2.NewClient(ctx, ts)
-	client := github.NewClient(tc)
+	client, ctx, owner := Authentication() 
 
 	resp, _, err := client.Repositories.List(ctx, "", nil)
 	if err != nil {
@@ -117,24 +107,12 @@ func GetAllRepositories() ([]string, error) {
 	return repos, nil
 }
 
-// Authentication() creates a connection between your Github account
+
 // picks up the values on your repositories
-func (r *Repository) Authentication(repox string) (*Repository, error) {
+func (r *Repository) GetValues(repox string)  (*Repository, error){
 
-	user := ParseArgs()
-	token, _ := user["token"]
-	owner, _ := user["owner"]
-	repository :=  repox
-
-
-	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: token},
-	)
-	tc := oauth2.NewClient(ctx, ts)
-	client := github.NewClient(tc)
-
-	resp, _, err := client.Repositories.Get(ctx, owner, repository)
+	client, ctx, owner := Authentication()
+	resp, _, err := client.Repositories.Get(ctx, owner, repox)
 	if err != nil{
 		return nil, err
 	}
@@ -144,7 +122,24 @@ func (r *Repository) Authentication(repox string) (*Repository, error) {
 	r.OpenIssuesCount = *resp.OpenIssuesCount
 	r.StargazersCount = *resp.StargazersCount
 	r.Fork = *resp.Fork
-
+	
 	return r, nil
+}
+
+// Authentication() creates a connection between your Github account
+func Authentication() (*github.Client, context.Context, string) {
+
+	user := ParseArgs()
+	token, _ := user["token"]
+	owner, _ := user["owner"]
+
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: token},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+	client := github.NewClient(tc)
+
+	return client, ctx, owner
 	
 }
