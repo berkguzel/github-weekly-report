@@ -37,7 +37,7 @@ export ACCESS_TOKEN="" \
 ```
 
 ```
-docker run -d \
+docker run -d --restart \
 > -e ACCESS_TOKEN="" \
 > -e OWNER="" \
 > -e REPOSITORY="" \
