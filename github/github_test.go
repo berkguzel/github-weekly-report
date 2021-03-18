@@ -1,7 +1,6 @@
 package github
 
 import (
-
 	"testing"
 )
 
@@ -11,7 +10,7 @@ func TestInitialRepository(t *testing.T) {
 		t.Error(err)
 	}
 	if got != nil {
-		t.Errorf("Expected empty return from repositories \n %v", err)	
+		t.Errorf("Expected empty return from repositories \n %v", err)
 	}
 }
 

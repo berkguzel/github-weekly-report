@@ -3,20 +3,21 @@ package github
 import (
 	"context"
 	"strings"
+	"time"
 
+	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
-	"github.com/google/go-github/github" 
 )
 
-type Repository struct{
-	Name string
-	ForksCount int
+type Repository struct {
+	Name            string
+	ForksCount      int
 	OpenIssuesCount int
 	StargazersCount int
-	Time string
-	Fork bool
-
+	Time            string
+	Fork            bool
 }
+
 var repos []string
 var initialRepo []Repository
 var observerRepo []Repository
@@ -28,41 +29,41 @@ func InitialRepository(sizeOfRepos int, arrayofRepos []string) ([]Repository, er
 	initRepo := &Repository{}
 
 	initialRepo = nil
-	for i :=0; i < sizeOfRepos ; i ++ {
+	for i := 0; i < sizeOfRepos; i++ {
 		name := arrayofRepos[i]
 		v, _ := initRepo.GetValues(name)
 
 		initialRepo = append(initialRepo, Repository{
-			Name: v.Name,
-			ForksCount: v.ForksCount,
+			Name:            v.Name,
+			ForksCount:      v.ForksCount,
 			OpenIssuesCount: v.OpenIssuesCount,
 			StargazersCount: v.StargazersCount,
-			Time: v.Time,
-			Fork: v.Fork,
+			Time:            v.Time,
+			Fork:            v.Fork,
 		})
 	}
 	return initialRepo, nil
 }
 
 // ObserverRepository() runs when notification time has come
-func ObserverRepository(sizeOfRepos int, arrayofRepos []string) ([]Repository, error){
+func ObserverRepository(sizeOfRepos int, arrayofRepos []string) ([]Repository, error) {
 
 	obsRepo := &Repository{}
 
 	observerRepo = nil
-	for i :=0; i < sizeOfRepos ; i ++ {
+	for i := 0; i < sizeOfRepos; i++ {
 		name := arrayofRepos[i]
 		v, err := obsRepo.GetValues(name)
 		if err != nil {
 			return nil, err
 		}
 		observerRepo = append(observerRepo, Repository{
-			Name: v.Name,
-			ForksCount: v.ForksCount,
+			Name:            v.Name,
+			ForksCount:      v.ForksCount,
 			OpenIssuesCount: v.OpenIssuesCount,
 			StargazersCount: v.StargazersCount,
-			Time: v.Time,
-			Fork: v.Fork,
+			Time:            v.Time,
+			Fork:            v.Fork,
 		})
 	}
 
@@ -71,7 +72,7 @@ func ObserverRepository(sizeOfRepos int, arrayofRepos []string) ([]Repository, e
 
 // RepositoryArray() appends name of the repositories to repos array
 func RepositoryArray(repository string) ([]string, error) {
-	
+
 	if repository == "all" || repository == "ALL" {
 		v, _ := GetAllRepositories()
 		return v, nil
@@ -89,17 +90,17 @@ func RepositoryArray(repository string) ([]string, error) {
 // GetAllRepositories() runs when all option selected for repository
 func GetAllRepositories() ([]string, error) {
 
-	_,_, fork := Flags()
-	client, ctx, owner := Authentication() 
+	_, _, fork := Flags()
+	client, ctx, owner := Authentication()
 
 	resp, _, err := client.Repositories.List(ctx, "", nil)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, repo := range resp{
+	for _, repo := range resp {
 		if *repo.Owner.Login == owner &&
-		fork == *repo.Fork {
+			fork == *repo.Fork {
 			repos = append(repos, *repo.Name)
 		}
 	}
@@ -107,13 +108,12 @@ func GetAllRepositories() ([]string, error) {
 	return repos, nil
 }
 
-
 // picks up the values on your repositories
-func (r *Repository) GetValues(repox string)  (*Repository, error){
+func (r *Repository) GetValues(repox string) (*Repository, error) {
 
 	client, ctx, owner := Authentication()
 	resp, _, err := client.Repositories.Get(ctx, owner, repox)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 
@@ -122,7 +122,7 @@ func (r *Repository) GetValues(repox string)  (*Repository, error){
 	r.OpenIssuesCount = *resp.OpenIssuesCount
 	r.StargazersCount = *resp.StargazersCount
 	r.Fork = *resp.Fork
-	
+
 	return r, nil
 }
 
@@ -130,16 +130,18 @@ func (r *Repository) GetValues(repox string)  (*Repository, error){
 func Authentication() (*github.Client, context.Context, string) {
 
 	user := ParseArgs()
-	token, _ := user["token"]
-	owner, _ := user["owner"]
+	token := user["token"]
+	owner := user["owner"]
 
-	ctx := context.Background()
+	ctx := context.TODO()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: token},
 	)
 	tc := oauth2.NewClient(ctx, ts)
 	client := github.NewClient(tc)
 
+	_, cancel := context.WithTimeout(ctx, 15 *time.Millisecond)
+	defer cancel()
 	return client, ctx, owner
-	
+
 }
