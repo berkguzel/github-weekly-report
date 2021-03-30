@@ -36,6 +36,7 @@ export ACCESS_TOKEN="" \
  docker build -t github-weekly-report .
 ```
 
+
 ```
 docker run -d --restart \
 > -e ACCESS_TOKEN="" \
@@ -45,8 +46,14 @@ docker run -d --restart \
 > -e TOKEN="" \
 > github-weekly-report
 
+```
 
 ```
+You can also use [ko](https://github.com/google/ko) to create image.
+ 
+ docker run -d --restart $(ko publish ./cmd) \ ...
+```
+
 #### ``` INTERVAL```  and ```FORK``` choices are also available. You may change your time interval to get notification and see the occurred stuffs on your repositories you forked. 
 
 You can get your notifications as daily, hourly or in minutes.
