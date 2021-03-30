@@ -48,10 +48,11 @@ docker run -d --restart \
 
 ```
 
-```
-You can also use [ko](https://github.com/google/ko) to create image.
+
+You can also use [ko](https://github.com/google/ko/) to create image.
  
- docker run -d --restart $(ko publish ./cmd) \ ...
+```
+docker run -d --restart $(ko publish ./cmd) \ ...
 ```
 
 #### ``` INTERVAL```  and ```FORK``` choices are also available. You may change your time interval to get notification and see the occurred stuffs on your repositories you forked. 
